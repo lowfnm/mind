@@ -1,0 +1,26 @@
+.progressContainer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  margin: 12px 0;
+}
+
+.step {
+  background-color: rgb(214, 248, 214);
+  height: 4px;
+  flex-grow: 1;
+}
+
+.step.filled {
+  background-color: green;
+}
+
+.step:not(:last-child) {
+  margin-right: 4px;
+}
+
+@media (width <= 960px) {
+  .step {
+    height: 4px;
+  }
+}

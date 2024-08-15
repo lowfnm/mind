@@ -1,0 +1,14 @@
+.container {
+  border: 1px solid transparent;
+}
+
+.containerError {
+  border: 1px solid #d32f2f;
+}
+
+.errorWrapper {
+  margin-top: 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
