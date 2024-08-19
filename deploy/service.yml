@@ -1,0 +1,190 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: Webapp AWS Fargate Task with ALB in Private Subnet
+
+Parameters:
+  ServiceName:
+    Type: String
+    Description: Service Name
+  Tag:
+    Type: String
+    Description: Docker image tag
+  Image:
+    Type: String
+    Description: Name of the container to run
+  Cpu:
+    Type: Number
+    Default: 256
+    Description: How much CPU
+  Memory:
+    Type: Number
+    Default: 512
+    Description: How much memory
+  DesiredCount:
+    Type: Number
+    Default: 1
+    Description: How many instances to run
+  HostedZoneId:
+    Type: String
+    Description: Hosted zone id
+  CertDomainName:
+    Type: String
+    Description: Certificate domain name
+  FQDNDomainNameMap:
+    Type: String
+    Description: Domain name
+
+Resources:
+  Cert:
+    Type: AWS::CertificateManager::Certificate
+    Properties:
+      DomainName: !Ref CertDomainName
+      ValidationMethod: DNS
+
+  DNSRecord:
+    Type: AWS::Route53::RecordSet
+    Properties:
+      HostedZoneId: !Ref HostedZoneId
+      Name: !Ref FQDNDomainNameMap
+      Type: A
+      AliasTarget:
+        DNSName: !GetAtt PublicLoadBalancer.DNSName
+        HostedZoneId: !GetAtt PublicLoadBalancer.CanonicalHostedZoneID
+
+  LogGroup:
+    Type: AWS::Logs::LogGroup
+    Properties:
+      LogGroupName: !Ref ServiceName
+
+  PublicLoadBalancerSG:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: ALB Security Group
+      VpcId: !ImportValue VpcId
+      SecurityGroupIngress:
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 80
+          ToPort: 80
+        - CidrIp: 0.0.0.0/0
+          IpProtocol: tcp
+          FromPort: 443
+          ToPort: 443
+
+  PublicLoadBalancer:
+    Type: AWS::ElasticLoadBalancingV2::LoadBalancer
+    Properties:
+      Name: !Ref ServiceName
+      Scheme: internet-facing
+      Subnets:
+        - !ImportValue PublicSubnetOne
+        - !ImportValue PublicSubnetTwo
+      SecurityGroups:
+        - !Ref PublicLoadBalancerSG
+
+  TargetGroupPublic:
+    Type: AWS::ElasticLoadBalancingV2::TargetGroup
+    Properties:
+      HealthCheckIntervalSeconds: 6
+      HealthCheckPath: /
+      HealthCheckProtocol: HTTP
+      HealthCheckTimeoutSeconds: 5
+      HealthyThresholdCount: 2
+      Name: !Join ['-', [!Ref ServiceName, 'tg']]
+      TargetType: ip
+      Port: 80
+      Protocol: HTTP
+      UnhealthyThresholdCount: 2
+      VpcId:
+        Fn::ImportValue: VpcId
+
+  PublicLoadBalancerListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    DependsOn:
+      - PublicLoadBalancer
+    Properties:
+      Certificates:
+        - CertificateArn: !Ref Cert
+      DefaultActions:
+        - TargetGroupArn: !Ref TargetGroupPublic
+          Type: forward
+      LoadBalancerArn: !Ref PublicLoadBalancer
+      Port: 443
+      Protocol: HTTPS
+      SslPolicy: ELBSecurityPolicy-FS-1-2-Res-2020-10
+
+  PublicLoadBalancerRedirectListener:
+    Type: AWS::ElasticLoadBalancingV2::Listener
+    Properties:
+      DefaultActions:
+        - Type: redirect
+          RedirectConfig:
+            Protocol: HTTPS
+            Port: 443
+            Host: '#{host}'
+            Path: '/#{path}'
+            Query: '#{query}'
+            StatusCode: HTTP_301
+      LoadBalancerArn: !Ref PublicLoadBalancer
+      Port: 80
+      Protocol: HTTP
+
+  ListenerRuleHTTP:
+    Type: AWS::ElasticLoadBalancingV2::ListenerRule
+    Properties:
+      Actions:
+        - Type: forward
+          TargetGroupArn: !Ref TargetGroupPublic
+      Priority: 1
+      Conditions:
+        - Field: path-pattern
+          Values:
+            - '/*'
+      ListenerArn: !Ref PublicLoadBalancerListener
+
+  TaskDefinition:
+    Type: AWS::ECS::TaskDefinition
+    Properties:
+      Family: !Ref ServiceName
+      Cpu: !Ref Cpu
+      Memory: !Ref Memory
+      NetworkMode: awsvpc
+      RequiresCompatibilities:
+        - FARGATE
+      ExecutionRoleArn: !ImportValue ECSTaskExecutionRole
+      TaskRoleArn: !ImportValue ECSRole
+      ContainerDefinitions:
+        - Name: !Ref ServiceName
+          Cpu: !Ref Cpu
+          Memory: !Ref Memory
+          Image: !Join [':', [!Ref Image, !Ref Tag]]
+          PortMappings:
+            - ContainerPort: 80
+              Protocol: http
+          LogConfiguration:
+            LogDriver: awslogs
+            Options:
+              awslogs-group: !Ref ServiceName
+              awslogs-region: !Ref AWS::Region
+              awslogs-stream-prefix: !Ref ServiceName
+
+  Service:
+    Type: AWS::ECS::Service
+    DependsOn: [ListenerRuleHTTP]
+    Properties:
+      Cluster: !ImportValue Cluster
+      ServiceName: !Join ['-', [!Ref ServiceName, 'svc']]
+      TaskDefinition: !Ref TaskDefinition
+      LaunchType: FARGATE
+      DesiredCount: !Ref DesiredCount
+      NetworkConfiguration:
+        AwsvpcConfiguration:
+          Subnets:
+            - !ImportValue PrivateSubnetOne
+            - !ImportValue PrivateSubnetTwo
+          SecurityGroups:
+            - !Ref PublicLoadBalancerSG
+          AssignPublicIp: DISABLED
+      LoadBalancers:
+        - TargetGroupArn: !Ref TargetGroupPublic
+          ContainerName: !Ref ServiceName
+          ContainerPort: 80

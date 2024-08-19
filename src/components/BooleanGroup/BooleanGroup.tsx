@@ -1,19 +1,20 @@
-import React from "react";
+import { FC } from "react";
 import Radio from "@mui/material/Radio";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import { Typography } from "@mui/material";
-import WarningIcon from "../../assets/icons/WarningIcon";
-import styles from "./BooleanGroupComponent.module.css";
+import { WarningIcon } from "@/assets/icons";
 
-interface BooleanGroupComponentProps {
+import styles from "./BooleanGroup.module.css";
+
+export type BooleanGroupProps = {
   name: string;
   selectedValue: string;
   error?: string;
   onChange: (value: string) => void;
 }
 
-const BooleanGroupComponent: React.FC<BooleanGroupComponentProps> = ({
+export const BooleanGroup: FC<BooleanGroupProps> = ({
   name,
   selectedValue,
   error,
@@ -40,5 +41,3 @@ const BooleanGroupComponent: React.FC<BooleanGroupComponentProps> = ({
     </RadioGroup>
   );
 };
-
-export default BooleanGroupComponent;

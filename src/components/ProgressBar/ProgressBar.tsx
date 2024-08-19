@@ -1,13 +1,13 @@
 "use client";
-import React from "react";
+import { FC } from 'react'
 import styles from "./ProgressBar.module.css";
 
-export interface ProgressBarProps {
+export type ProgressBarProps = {
   steps: number;
   filledProgress: number;
 }
 
-export const ProgressBar: React.FC<ProgressBarProps> = ({
+export const ProgressBar: FC<ProgressBarProps> = ({
   steps,
   filledProgress,
 }) => {

@@ -1,12 +1,13 @@
-import React, { ChangeEvent } from "react";
+import { ChangeEvent, FC } from 'react';
 import Checkbox from "@mui/material/Checkbox";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormGroup from "@mui/material/FormGroup";
 import { Typography } from "@mui/material";
-import WarningIcon from "../../assets/icons/WarningIcon";
-import styles from "./CheckboxGroupComponent.module.css";
+import { WarningIcon } from "@/assets/icons/WarningIcon";
 
-interface CheckboxGroupComponentProps {
+import styles from "./CheckboxGroup.module.css";
+
+export type CheckboxGroupComponentProps = {
   name: string;
   choices: string[];
   selectedChoices: string[];
@@ -14,7 +15,7 @@ interface CheckboxGroupComponentProps {
   onChange: (name: string, choice: string, checked: boolean) => void;
 }
 
-const CheckboxGroupComponent: React.FC<CheckboxGroupComponentProps> = ({
+export const CheckboxGroup: FC<CheckboxGroupComponentProps> = ({
   name,
   choices,
   selectedChoices,
@@ -51,5 +52,3 @@ const CheckboxGroupComponent: React.FC<CheckboxGroupComponentProps> = ({
     </FormGroup>
   );
 };
-
-export default CheckboxGroupComponent;

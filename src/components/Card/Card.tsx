@@ -1,21 +1,18 @@
-import React, { ChangeEvent, useState, useEffect } from "react";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
-import CardMedia from "@mui/material/CardMedia";
-import Typography from "@mui/material/Typography";
-import Button from "@mui/material/Button";
-import RadioGroupComponent from "../RadioGroupComponent/RadioGroupComponent";
-import CheckboxGroupComponent from "../CheckboxGroupComponent/CheckboxGroupComponent";
-import TextFieldComponent from "../TextFieldComponent/TextFieldComponent";
-import BooleanGroupComponent from "../BooleanGroupComponent/BooleanGroupComponent";
-import { SelectedChoicesProps, useAppContext } from "../../context/AppContext";
-import { ProgressBar } from "../ProgressBar/ProgressBar";
-import { Box } from "@mui/material";
-import styles from "./Card.module.css";
+import React, { ChangeEvent, useState, useEffect } from 'react';
+import Card from '@mui/material/Card';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import { CheckboxGroup, CustomRadioGroup, CustomTextField, BooleanGroup, ProgressBar } from '@/components';
+import { SelectedChoicesProps, useAppContext } from '@/context/AppContext';
+import { Box } from '@mui/material';
 
-type ElementType = "radiogroup" | "checkbox" | "boolean" | "text";
+import styles from './Card.module.css';
 
-interface Element {
+type ElementType = 'radiogroup' | 'checkbox' | 'boolean' | 'text';
+
+type Element = {
   type: ElementType;
   name: string;
   title: string;
@@ -23,12 +20,12 @@ interface Element {
   isRequired?: boolean;
 }
 
-interface Page {
+type Page = {
   name: string;
   elements: Element[];
 }
 
-interface CustomCardProps {
+export type CustomCardProps = {
   title: string;
   description: any[];
   questions?: {
@@ -39,7 +36,7 @@ interface CustomCardProps {
   handleSubmit: () => void;
 }
 
-const CustomCard = ({
+export const CustomCard = ({
   title,
   description,
   questions,
@@ -57,56 +54,56 @@ const CustomCard = ({
 
   const handleChoiceChange = (name: string, value: string) => {
     setSelectedChoice(name, [value]);
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
   };
 
   const handleBooleanChange = (name: string, value: string) => {
-    const newValue = value === "Yes" ? "Yes" : "No";
+    const newValue = value === 'Yes' ? 'Yes' : 'No';
     setSelectedChoice(name, [newValue]);
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
   };
 
   const handleCheckboxChange = (
     name: string,
     choice: string,
-    checked: boolean
+    checked: boolean,
   ) => {
     const currentChoices = selectedChoices[name] || [];
     const updatedChoices = checked
       ? [...currentChoices, choice]
       : currentChoices.filter((currChoice) => currChoice !== choice);
     setSelectedChoice(name, updatedChoices);
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
   };
 
   const handleTextChange = (
-    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     const { name, value } = event.target;
     setTextAnswers((prev) => ({ ...prev, [name]: value }));
     setSelectedChoice(name, [value]);
-    setErrors((prevErrors) => ({ ...prevErrors, [name]: "" }));
+    setErrors((prevErrors) => ({ ...prevErrors, [name]: '' }));
   };
 
   const handleNextPage = () => {
     const newErrors: Record<string, string> = {};
     if (page) {
       page.elements.forEach((element) => {
-        if (element.type === "text") {
+        if (element.type === 'text') {
           if (!textAnswers[element.name]?.trim()) {
-            newErrors[element.name] = "This field is required";
+            newErrors[element.name] = 'This field is required';
           }
-        } else if (element.type === "radiogroup") {
+        } else if (element.type === 'radiogroup') {
           if (!selectedChoices[element.name]?.length) {
-            newErrors[element.name] = "This field is required";
+            newErrors[element.name] = 'This field is required';
           }
-        } else if (element.type === "checkbox") {
+        } else if (element.type === 'checkbox') {
           if (!selectedChoices[element.name]?.length) {
-            newErrors[element.name] = "At least one option must be selected";
+            newErrors[element.name] = 'At least one option must be selected';
           }
-        } else if (element.type === "boolean") {
+        } else if (element.type === 'boolean') {
           if (!selectedChoices[element.name]?.length) {
-            newErrors[element.name] = "This field is required";
+            newErrors[element.name] = 'This field is required';
           }
         }
       });
@@ -126,9 +123,9 @@ const CustomCard = ({
     if (page) {
       const initialTextAnswers: Record<string, string> = {};
       page.elements.forEach((element) => {
-        if (element.type === "text") {
+        if (element.type === 'text') {
           initialTextAnswers[element.name] =
-            selectedChoices[element.name]?.[0] || "";
+            selectedChoices[element.name]?.[0] || '';
         }
       });
       setTextAnswers(initialTextAnswers);
@@ -150,19 +147,19 @@ const CustomCard = ({
   if (!page) return null;
 
   const renderComponentByType = (element: Element) => {
-    if (element.type === "radiogroup" && element.choices) {
+    if (element.type === 'radiogroup' && element.choices) {
       return (
-        <RadioGroupComponent
+        <CustomRadioGroup
           name={element.name}
           choices={element.choices}
-          selectedValue={selectedChoices[element.name]?.[0] || ""}
-          onChange={(value) => handleChoiceChange(element.name, value)}
+          selectedValue={selectedChoices[element.name]?.[0] || ''}
+          onChange={(value: any) => handleChoiceChange(element.name, value)}
           error={errors[element.name]}
         />
       );
-    } else if (element.type === "checkbox" && element.choices) {
+    } else if (element.type === 'checkbox' && element.choices) {
       return (
-        <CheckboxGroupComponent
+        <CheckboxGroup
           name={element.name}
           choices={element.choices}
           selectedChoices={selectedChoices[element.name] || []}
@@ -170,21 +167,21 @@ const CustomCard = ({
           error={errors[element.name]}
         />
       );
-    } else if (element.type === "text") {
+    } else if (element.type === 'text') {
       return (
-        <TextFieldComponent
+        <CustomTextField
           name={element.name}
           label={element.title}
-          value={textAnswers[element.name] || ""}
+          value={textAnswers[element.name] || ''}
           onChange={handleTextChange}
           error={errors[element.name]}
         />
       );
-    } else if (element.type === "boolean") {
+    } else if (element.type === 'boolean') {
       return (
-        <BooleanGroupComponent
+        <BooleanGroup
           name={element.name}
-          selectedValue={selectedChoices[element.name]?.[0] || ""}
+          selectedValue={selectedChoices[element.name]?.[0] || ''}
           onChange={(value) => handleBooleanChange(element.name, value)}
           error={errors[element.name]}
         />
@@ -210,19 +207,19 @@ const CustomCard = ({
                 const props = {
                   key: index,
                   className:
-                    item.type === "p"
+                    item.type === 'p'
                       ? styles.paragraph
-                      : item.type === "h1"
-                      ? styles.heading
-                      : null,
+                      : item.type === 'h1'
+                        ? styles.heading
+                        : null,
                 };
                 const elementToString = item.props.children.toString();
                 const element =
-                  isExpanded && elementToString && item.type !== "p"
+                  isExpanded && elementToString && item.type !== 'p'
                     ? elementToString
-                    : elementToString && item.type === "p" && !isExpanded
-                    ? elementToString.slice(0, 100) + "..."
-                    : elementToString;
+                    : elementToString && item.type === 'p' && !isExpanded
+                      ? elementToString.slice(0, 100) + '...'
+                      : elementToString;
                 return React.createElement(item.type, props, element);
               })}
             </div>
@@ -231,7 +228,7 @@ const CustomCard = ({
                 onClick={() => setIsExpanded((prev) => !prev)}
                 className={styles.expandBtn}
               >
-                {isExpanded ? "Read Less" : "Read More"}
+                {isExpanded ? 'Read Less' : 'Read More'}
               </span>
             </span>
           </div>
@@ -281,5 +278,3 @@ const CustomCard = ({
     </Card>
   );
 };
-
-export default CustomCard;

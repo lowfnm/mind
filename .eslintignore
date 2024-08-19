@@ -1,0 +1,7 @@
+# Webapp
+build/*
+node_modules/*
+.github
+
+# Pre-downloaded minified scripts
+*.min.js

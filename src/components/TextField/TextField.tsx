@@ -1,10 +1,11 @@
-import React, { ChangeEvent } from "react";
+import { FC, ChangeEvent } from "react";
 import TextField from "@mui/material/TextField";
 import { Typography } from "@mui/material";
-import WarningIcon from "../../assets/icons/WarningIcon";
-import styles from "./TextFieldComponent.module.css";
+import { WarningIcon } from "@/assets/icons/WarningIcon";
 
-interface TextFieldComponentProps {
+import styles from "./TextField.module.css";
+
+export type CustomTextFieldProps = {
   name: string;
   label: string;
   value: string;
@@ -14,7 +15,7 @@ interface TextFieldComponentProps {
   ) => void;
 }
 
-const TextFieldComponent: React.FC<TextFieldComponentProps> = ({
+export const CustomTextField: FC<CustomTextFieldProps> = ({
   name,
   label,
   value,
@@ -47,5 +48,3 @@ const TextFieldComponent: React.FC<TextFieldComponentProps> = ({
     </div>
   );
 };
-
-export default TextFieldComponent;

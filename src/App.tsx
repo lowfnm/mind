@@ -4,9 +4,8 @@ import Grid from "@mui/material/Grid";
 import Container from "@mui/material/Container";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { GET_ASSESSMENTS } from "./graphql/query/getAssessment";
-import CustomCard from "./components/Card/Card";
+import { CustomCard, ResultBlock } from '@/components';
 import { AppProvider } from "./context/AppContext";
-import ResultBlock from "./components/Result/Result";
 
 const App = () => {
   const { loading, error, data } = useQuery(GET_ASSESSMENTS);

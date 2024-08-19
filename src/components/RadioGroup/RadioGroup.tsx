@@ -1,12 +1,13 @@
-import React from "react";
+import { FC } from "react";
 import Radio from "@mui/material/Radio";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import RadioGroup from "@mui/material/RadioGroup";
 import { Typography } from "@mui/material";
-import WarningIcon from "../../assets/icons/WarningIcon";
-import styles from "./RadioGroupComponent.module.css";
+import { WarningIcon } from "@/assets/icons/WarningIcon";
 
-interface RadioGroupComponentProps {
+import styles from "./RadioGroup.module.css";
+
+export type RadioGroupProps = {
   name: string;
   choices: string[];
   selectedValue: string;
@@ -14,7 +15,7 @@ interface RadioGroupComponentProps {
   onChange: (value: string) => void;
 }
 
-const RadioGroupComponent: React.FC<RadioGroupComponentProps> = ({
+export const CustomRadioGroup: FC<RadioGroupProps> = ({
   name,
   choices,
   selectedValue,
@@ -48,5 +49,3 @@ const RadioGroupComponent: React.FC<RadioGroupComponentProps> = ({
     </RadioGroup>
   );
 };
-
-export default RadioGroupComponent;

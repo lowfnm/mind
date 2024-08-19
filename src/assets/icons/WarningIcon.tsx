@@ -2,7 +2,7 @@ import React from "react";
 
 type TSVGElementProps = React.SVGProps<SVGSVGElement>;
 
-const WarningIcon = (props: TSVGElementProps): JSX.Element => {
+export const WarningIcon = (props: TSVGElementProps): JSX.Element => {
   return (
     <svg
       {...props}
@@ -22,5 +22,3 @@ const WarningIcon = (props: TSVGElementProps): JSX.Element => {
     </svg>
   );
 };
-
-export default WarningIcon;

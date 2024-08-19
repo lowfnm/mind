@@ -1,6 +1,6 @@
 import { ApolloClient, InMemoryCache, HttpLink } from '@apollo/client';
 
-const client = new ApolloClient({
+export const client = new ApolloClient({
   link: new HttpLink({
     uri: 'https://graphql.contentful.com/content/v1/spaces/h3n75a0xb6vi',
     headers: {
@@ -9,5 +9,3 @@ const client = new ApolloClient({
   }),
   cache: new InMemoryCache(),
 });
-
-export default client;

@@ -1,14 +1,14 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { useAppContext } from "../../context/AppContext";
-import { index } from "../../AlgoliaClient";
+import { useAppContext } from '@/context/AppContext';
+import { index } from '@/AlgoliaClient';
 
-const ResultBlock: React.FC = () => {
+export const ResultBlock = () => {
   const [algoliaResults, setAlgoliaResults] = useState<any[]>([]);
-  const [isLoading, setIsloading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const { selectedChoices } = useAppContext();
 
   const facetFilters = Object.entries(selectedChoices).flatMap(
@@ -36,7 +36,7 @@ const ResultBlock: React.FC = () => {
       } catch (error) {
         console.error("Search failed:", error);
       } finally {
-        setIsloading(false);
+        setIsLoading(false);
       }
     };
 
@@ -74,5 +74,3 @@ const ResultBlock: React.FC = () => {
     </div>
   );
 };
-
-export default ResultBlock;
