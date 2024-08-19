@@ -1,10 +1,11 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { InstantSearch } from 'react-instantsearch';
-import App from './App';
+import { App } from './App';
 import { ApolloProvider } from '@apollo/client';
 import { client } from './provider/apollo';
-import { searchClient } from './AlgoliaClient';
+import { searchClient } from './client/algolia';
+
 import './index.css';
 
 createRoot(document.getElementById('root')!).render(

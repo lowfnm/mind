@@ -3,8 +3,8 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import CardMedia from "@mui/material/CardMedia";
 import Typography from "@mui/material/Typography";
-import { useAppContext } from '@/context/AppContext';
-import { index } from '@/AlgoliaClient';
+import { useAppContext } from '@/context/global';
+import { index } from '@/client/algolia';
 
 export const ResultBlock = () => {
   const [algoliaResults, setAlgoliaResults] = useState<any[]>([]);

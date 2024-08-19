@@ -1,5 +1,5 @@
-"use client";
 import { FC } from 'react'
+
 import styles from "./ProgressBar.module.css";
 
 export type ProgressBarProps = {

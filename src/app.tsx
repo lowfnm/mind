@@ -5,9 +5,9 @@ import Container from "@mui/material/Container";
 import { documentToReactComponents } from "@contentful/rich-text-react-renderer";
 import { GET_ASSESSMENTS } from "./graphql/query/getAssessment";
 import { CustomCard, ResultBlock } from '@/components';
-import { AppProvider } from "./context/AppContext";
+import { AppProvider } from "./context/global";
 
-const App = () => {
+export const App = () => {
   const { loading, error, data } = useQuery(GET_ASSESSMENTS);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -43,5 +43,3 @@ const App = () => {
     </AppProvider>
   );
 };
-
-export default App;

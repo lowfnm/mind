@@ -1,19 +1,19 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
+import { createContext, useContext, useState, Dispatch, SetStateAction, FC, PropsWithChildren } from 'react';
 
 export type SelectedChoicesProps = Record<string, string[]>;
 
 interface QuestionContextType {
   currentPage: number;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  setCurrentPage: Dispatch<SetStateAction<number>>;
   selectedChoices: SelectedChoicesProps;
   setSelectedChoice: (name: string, choices: string[]) => void;
 }
 
 
-const AppContext = createContext<QuestionContextType | undefined>(undefined);
+const Global = createContext<QuestionContextType | undefined>(undefined);
 
 
-export const AppProvider: React.FC<{ children: ReactNode }> = ({
+export const AppProvider: FC<PropsWithChildren> = ({
   children,
 }) => {
   const [currentPage, setCurrentPage] = useState(0);
@@ -24,7 +24,7 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   return (
-    <AppContext.Provider
+    <Global.Provider
       value={{
         currentPage,
         setCurrentPage,
@@ -33,12 +33,12 @@ export const AppProvider: React.FC<{ children: ReactNode }> = ({
       }}
     >
       {children}
-    </AppContext.Provider>
+    </Global.Provider>
   );
 };
 
 export const useAppContext = () => {
-  const context = useContext(AppContext);
+  const context = useContext(Global);
   if (!context) {
     throw new Error("useAppContext must be used within an AppProvider");
   }

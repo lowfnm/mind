@@ -1,6 +1,6 @@
 import type { Preview } from '@storybook/react'
 
-import { AppProvider } from '../src/context/AppContext';
+import { AppProvider } from '../src/context/global';
 
 const preview: Preview = {
   decorators: [

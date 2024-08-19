@@ -1,11 +1,11 @@
-import React, { ChangeEvent, useState, useEffect } from 'react';
+import { ChangeEvent, useState, useEffect, createElement } from 'react';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
 import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import { CheckboxGroup, CustomRadioGroup, CustomTextField, BooleanGroup, ProgressBar } from '@/components';
-import { SelectedChoicesProps, useAppContext } from '@/context/AppContext';
+import { SelectedChoicesProps, useAppContext } from '@/context/global';
 import { Box } from '@mui/material';
 
 import styles from './Card.module.css';
@@ -220,7 +220,7 @@ export const CustomCard = ({
                     : elementToString && item.type === 'p' && !isExpanded
                       ? elementToString.slice(0, 100) + '...'
                       : elementToString;
-                return React.createElement(item.type, props, element);
+                return createElement(item.type, props, element);
               })}
             </div>
             <span className={styles.expandBtnWrapper}>
